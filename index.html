@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CreaNext – AI Prompt Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <header class="hero-header">
+        <div class="logo">CreaNext</div>
+        <nav class="nav-links">
+            <a href="#hero">Home</a>
+            <a href="#features">Features</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero" class="hero-section">
+            <div class="hero-content">
+                <p class="hero-kicker">Create Beyond Imagination</p>
+                <h1>CreaNext AI Prompt Generator</h1>
+                <p class="hero-subtitle">Generate perfect prompts for any AI model in seconds.</p>
+                <button class="primary-btn" id="cta-btn">Start Creating</button>
+            </div>
+            <div class="hero-visual">
+                <div class="glow-orb orb-one"></div>
+                <div class="glow-orb orb-two"></div>
+                <div class="glass-panel" aria-label="CreaNext capabilities">
+                    <p class="panel-label">Workflow boosts</p>
+                    <article class="panel-item">
+                        <div class="panel-icon" aria-hidden="true"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                        <div>
+                            <p class="panel-title">Smart presets</p>
+                            <p class="panel-text">One-tap styles tuned for top AI models.</p>
+                        </div>
+                    </article>
+                    <article class="panel-item">
+                        <div class="panel-icon" aria-hidden="true"><i class="fa-solid fa-layer-group"></i></div>
+                        <div>
+                            <p class="panel-title">Context aware</p>
+                            <p class="panel-text">Understands tone, audience, and use-case hints.</p>
+                        </div>
+                    </article>
+                    <article class="panel-item">
+                        <div class="panel-icon" aria-hidden="true"><i class="fa-solid fa-bolt"></i></div>
+                        <div>
+                            <p class="panel-title">Instant export</p>
+                            <p class="panel-text">Copy-ready prompts for docs, chats, or code.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="prompt" class="prompt-section">
+            <div class="prompt-card">
+                <div class="prompt-card-header">
+                    <h2>Share your idea</h2>
+                    <p>Describe what you want and let CreaNext craft a ready-to-use prompt.</p>
+                </div>
+                <label for="prompt-input" class="sr-only">Enter your idea</label>
+                <textarea id="prompt-input" placeholder="Enter your idea…"></textarea>
+                <div class="input-row">
+                    <label for="prompt-type" class="sr-only">Prompt type</label>
+                    <select id="prompt-type">
+                        <option value="image">Image Prompt</option>
+                        <option value="video">YouTube Video Idea</option>
+                        <option value="blog">Blog Content</option>
+                        <option value="ad">Ad Copy</option>
+                        <option value="code">Coding Prompt</option>
+                    </select>
+                    <button class="primary-btn" id="generate-btn">Generate Prompt</button>
+                </div>
+                <div class="prompt-output" id="prompt-output">
+                    Ready when you are—enter an idea and hit Generate to see your prompt.
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features-section">
+            <div class="section-heading">
+                <p class="section-kicker">Why CreaNext</p>
+                <h2>Next-gen prompt engineering toolkit</h2>
+            </div>
+            <div class="features-grid">
+                <article class="feature-card">
+                    <div class="feature-icon"><i class="fa-solid fa-rocket"></i></div>
+                    <h3>Fast &amp; Smart Output</h3>
+                    <p>Optimized prompting logic delivers sharp, ready-to-send prompts instantly.</p>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-icon"><i class="fa-solid fa-brain"></i></div>
+                    <h3>Multiple Categories</h3>
+                    <p>Switch between creative, marketing, video, and code templates effortlessly.</p>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-icon"><i class="fa-solid fa-shield"></i></div>
+                    <h3>No Login Needed</h3>
+                    <p>Jump straight into building without accounts, paywalls, or friction.</p>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-icon"><i class="fa-solid fa-mobile-screen"></i></div>
+                    <h3>Works on All Devices</h3>
+                    <p>Responsive layout and touch-ready inputs keep ideas flowing anywhere.</p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer id="contact" class="site-footer">
+        <p>Made by CreaNext</p>
+        <div class="footer-icons">
+            <a href="https://instagram.com" aria-label="Instagram">
+                <i class="fa-brands fa-instagram"></i>
+            </a>
+            <a href="https://github.com" aria-label="GitHub">
+                <i class="fa-brands fa-github"></i>
+            </a>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
