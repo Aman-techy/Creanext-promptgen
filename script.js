@@ -3,10 +3,7 @@ const generateBtn = document.getElementById("generate-btn");
 const promptSection = document.getElementById("prompt");
 const promptOutput = document.getElementById("prompt-output");
 
-const API_URL =
-    window.CREANEXT_API_URL ||
-    localStorage.getItem("creanextApiUrl") ||
-    "https://<your-worker-subdomain>.workers.dev/api/prompt";
+const API_URL = "https://creanext-backend.faveeditzs.workers.dev/";
 
 window.setCreaNextApiUrl = (url) => {
     if (!url || typeof url !== "string") {
