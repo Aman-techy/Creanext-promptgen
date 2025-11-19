@@ -3,7 +3,20 @@ const generateBtn = document.getElementById("generate-btn");
 const promptSection = document.getElementById("prompt");
 const promptOutput = document.getElementById("prompt-output");
 
-const API_URL = "https://creanext-backend.faveeditzs.workers.dev/";
+const API_URL =
+    window.CREANEXT_API_URL ||
+    localStorage.getItem("creanextApiUrl") ||
+    "https://<your-worker-subdomain>.workers.dev/api/prompt";
+
+window.setCreaNextApiUrl = (url) => {
+    if (!url || typeof url !== "string") {
+        console.warn("Expected a non-empty string for the API URL");
+        return "Please pass a valid API URL string.";
+    }
+
+    localStorage.setItem("creanextApiUrl", url);
+    return `CreaNext API URL set to ${url}`;
+};
 
 const DEFAULT_PLACEHOLDER = "Ready when you are—enter an idea and hit Generate to see your prompt.";
 
@@ -107,3 +120,5 @@ generateBtn.addEventListener("click", async (event) => {
     addRipple(event);
     await generatePrompt();
 });
+
+window.setCreaNextApiUrl("https://creanext-backend.faveeditzs.workers.dev/");

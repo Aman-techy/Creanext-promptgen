@@ -1,66 +1,70 @@
 # CreaNext – AI Prompt Generator
 
-Modern glassmorphic landing page for the CreaNext prompt generator paired with a lightweight Node.js backend. Use it as a local playground or deploy the static site to GitHub Pages while keeping the backend on any Node-friendly host.
+Modern glassmorphic landing page for the CreaNext prompt generator. The project is now **frontend only** and relies on a deterministic Cloudflare Worker (or any compatible endpoint) configured inside `script.js` via `API_URL`.
 
 ## Requirements
 
-- Node.js 20+ (Winget-installed LTS 24.x recommended)
-- npm 10+
+- Any static web server (or simply open `index.html` in your browser)
+- Optional: VS Code Live Server for local hot reload
 
-## Setup
-
-```powershell
-cd "C:\Users\samarth\OneDrive\Documents\promptgen"
-npm install
-```
-
-## Running the backend locally
+## Local development
 
 ```powershell
-# default: http://localhost:4000
-npm run start
+# from the repo root
+code .
+# use Live Server or double-click index.html
 ```
 
-Use `npm run dev` for auto-reload via `node --watch` (Node 20+).
+No build step or package installation is needed.
 
-Visit `index.html` with a local static server (e.g., VS Code Live Server). When the site is opened from `http://localhost:*`, the frontend automatically calls the local backend at `http://localhost:4000/api/prompt`. Deployed builds (GitHub Pages) continue targeting the Cloudflare Worker.
+## Deploying to GitHub Pages
 
-## Optional Hugging Face integration
+1. Commit the static files (`index.html`, `style.css`, `script.js`, assets).
+2. Push to the `main` branch.
+3. Enable GitHub Pages for the repository (Settings → Pages → `main` / `/root`).
+4. Confirm that `API_URL` in `script.js` points to a reachable backend (Cloudflare Worker, Worker proxy, etc.).
 
-Set the following environment variables before running `npm start` if you want the backend to proxy requests to Hugging Face:
+## Custom backends
+
+If you later add your own backend (Node, Workers, etc.), expose a POST endpoint that accepts `{ idea, type }` and update `API_URL` accordingly. Keep the frontend static so it can stay on GitHub Pages or any CDN.
+
+## Recommended free API: Cloudflare Worker (deterministic)
+
+Cloudflare’s free Workers tier (100k requests/day) lets you deploy the `cloudflare-worker/worker.js` file without additional services. The Worker performs all prompt scaffolding locally, so it never fails because of upstream AI outages.
+
+### 1. Create a Worker (dashboard or Wrangler)
+
+- **Dashboard**: Workers & Pages → Create Worker → paste the contents of `cloudflare-worker/worker.js` into the editor → Deploy.
+- **Wrangler** (CLI alternative):
 
 ```powershell
-$env:HF_TOKEN = "hf_your_token"
-$env:HF_API_URL = "https://router.huggingface.co/v1/chat/completions"
-$env:HF_MODEL = "google/gemma-2-2b-it"
-npm run start
+wrangler login
+wrangler init creanext-worker --type=javascript
+cd creanext-worker
+# replace src/index.js with cloudflare-worker/worker.js
+wrangler deploy
 ```
 
-Or, create a local `.env` file (already supported via `dotenv`) with:
+No bindings or secrets are required.
 
-```
-PORT=4000
-HF_TOKEN=hf_your_token
-HF_API_URL=https://router.huggingface.co/v1/chat/completions
-HF_MODEL=google/gemma-2-2b-it
-```
+### 2. Grab the endpoint
 
-Without `HF_TOKEN`, the backend returns a deterministic, well-structured prompt derived from the user input.
+After deploy, note the auto-generated URL (e.g., `https://creanext-worker.yourname.workers.dev/api/prompt`). If you own a domain, add a route, otherwise the workers.dev domain is fine.
 
-## Endpoints
+### 3. Point the frontend
 
-- `GET /health` – quick status check
-- `POST /api/prompt` – body `{ "seed": "...", "type": "image|video|blog|ad|code" }`
+In your browser console run:
 
-Response shape:
-
-```json
-{
-  "prompt": "...",
-  "note": "optional fallback context"
-}
+```javascript
+setCreaNextApiUrl("https://creanext-worker.yourname.workers.dev/api/prompt")
 ```
 
-## Frontend build
+This stores the URL in `localStorage` so the static site uses it immediately. Commit the URL to `script.js` if you want it baked in for every visitor.
 
-Static files (`index.html`, `style.css`, `script.js`) can be deployed anywhere. No bundler is required.
+### 4. Test end-to-end
+
+1. Push the static site to GitHub Pages.
+2. Visit the Pages URL, submit a prompt, and confirm you get a JSON response.
+3. (Optional) Hit `https://<worker>/api/prompt` with `POST` requests from Postman or curl to validate independently.
+
+You can swap this Worker for any HTTPS endpoint that accepts `{ idea, type }` and returns `{ prompt }` without changing the frontend logic.
