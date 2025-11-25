@@ -2,6 +2,8 @@ const ctaBtn = document.getElementById("cta-btn");
 const generateBtn = document.getElementById("generate-btn");
 const promptSection = document.getElementById("prompt");
 const promptOutput = document.getElementById("prompt-output");
+const copyBtn = document.getElementById("copy-btn");
+const copyStatus = document.getElementById("copy-status");
 const categoryNameEl = document.getElementById("category-name");
 const categoryChip = document.getElementById("category-chip");
 
@@ -433,6 +435,33 @@ const addRipple = (event) => {
     button.classList.add("ripple");
 };
 
+const updateCopyStatus = (message, duration = 1600) => {
+    if (!copyStatus) return;
+    copyStatus.textContent = message;
+    clearTimeout(updateCopyStatus.timeoutId);
+    updateCopyStatus.timeoutId = setTimeout(() => {
+        copyStatus.textContent = "Ready";
+    }, duration);
+};
+
+const copyPromptToClipboard = async () => {
+    if (!copyBtn || !promptOutput) return;
+    const text = promptOutput.textContent?.trim();
+
+    if (!text || text === DEFAULT_PLACEHOLDER) {
+        updateCopyStatus("Nothing to copy", 1400);
+        return;
+    }
+
+    try {
+        await navigator.clipboard.writeText(text);
+        updateCopyStatus("Copied");
+    } catch (error) {
+        console.error("Copy failed", error);
+        updateCopyStatus("Copy failed", 2000);
+    }
+};
+
 setPlaceholderState(promptOutput.textContent.trim());
 
 ctaBtn.addEventListener("click", smoothScrollToPrompt);
@@ -440,3 +469,5 @@ generateBtn.addEventListener("click", async (event) => {
     addRipple(event);
     await generatePrompt();
 });
+
+copyBtn?.addEventListener("click", copyPromptToClipboard);

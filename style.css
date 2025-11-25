@@ -421,6 +421,41 @@ textarea:focus {
     font-style: italic;
 }
 
+.copy-btn {
+    margin-top: 0.85rem;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 1.2rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(3, 6, 22, 0.85);
+    color: var(--text-primary);
+    font-weight: 500;
+    cursor: pointer;
+    transition: border 0.25s ease, transform 0.15s ease;
+}
+
+.copy-btn:hover {
+    border-color: rgba(33, 212, 253, 0.45);
+}
+
+.copy-btn:active {
+    transform: translateY(1px);
+}
+
+.copy-label {
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.82rem;
+}
+
+.copy-status {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
 .features-section {
     margin-top: 6rem;
 }
