@@ -130,10 +130,6 @@ const KEYWORD_CONSTRAINT_MAP = [
     { regex: /video/i, constraints: ["any footage or asset needs are called out"] }
 ];
 
-const HF_DEFAULT_MODEL_ID = "mistralai/Mixtral-8x7B-Instruct";
-const HF_API_BASE = "https://api-inference.huggingface.co/models";
-const HF_TIMEOUT_MS = 12000;
-
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_DEFAULT_MODEL = "llama-3.1-8b-instant";
 const GROQ_TIMEOUT_MS = 12000;
@@ -243,71 +239,6 @@ const buildPrompt = ({ idea, type, tone, length }) => {
         .replace(/\.(?=\.)/g, ".");
 };
 
-const callHuggingFace = async ({ idea, type, tone, length }, env) => {
-    if (!env?.HF_API_KEY) return null;
-
-    const hfModelId = (env?.HF_MODEL_ID || HF_DEFAULT_MODEL_ID).trim();
-    const hfModelUrl = `${HF_API_BASE}/${hfModelId}`;
-
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), HF_TIMEOUT_MS);
-
-    const composedPrompt = composeAiPrompt({ idea, type, tone, length });
-
-    try {
-        const response = await fetch(hfModelUrl, {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${env.HF_API_KEY}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                inputs: composedPrompt,
-                parameters: {
-                    max_new_tokens: 220,
-                    temperature: 0.35,
-                    top_p: 0.9
-                }
-            }),
-            signal: controller.signal
-        });
-
-        if (response.status === 410) {
-            // Model is loading; poll the status endpoint briefly
-            const statusResponse = await fetch(`${hfModelUrl}/status`, {
-                headers: { Authorization: `Bearer ${env.HF_API_KEY}` }
-            });
-            const statusJson = await statusResponse.json();
-            throw new Error(`HF model loading: ${statusJson?.state || "unknown"}`);
-        }
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`HF request failed: ${response.status} ${errorText}`);
-        }
-
-        const contentType = response.headers.get("content-type") || "";
-        let rawText = "";
-
-        if (contentType.includes("application/json")) {
-            try {
-                const data = await response.json();
-                rawText = Array.isArray(data)
-                    ? data[0]?.generated_text || data[0]?.output_text
-                    : data.generated_text || data.output_text || data?.choices?.[0]?.text || "";
-            } catch (error) {
-                rawText = await response.text();
-            }
-        } else {
-            rawText = await response.text();
-        }
-
-        return sanitizeAiOutput(rawText);
-    } finally {
-        clearTimeout(timeout);
-    }
-};
-
 const callGroq = async ({ idea, type, tone, length }, env) => {
     if (!env?.GROQ_API_KEY) return null;
 
@@ -381,18 +312,6 @@ const handlePost = async (request, env) => {
             }
         } catch (error) {
             console.warn("Groq request failed, checking fallback", error.message || error);
-        }
-    }
-
-    if (!prompt && env?.HF_API_KEY) {
-        try {
-            const aiPrompt = await callHuggingFace({ idea, type, tone, length }, env);
-            if (aiPrompt) {
-                source = "huggingface";
-                prompt = aiPrompt;
-            }
-        } catch (error) {
-            console.warn("Hugging Face request failed, falling back", error.message || error);
         }
     }
 

@@ -8,10 +8,9 @@ const makeRequest = (payload) =>
     });
 
 const run = async () => {
-    const env = process.env.HF_API_KEY ? { HF_API_KEY: process.env.HF_API_KEY } : {};
     const response = await worker.fetch(
         makeRequest({ idea: "Launch a retro space poster campaign", type: "image" }),
-        env
+        {}
     );
 
     const body = await response.json();

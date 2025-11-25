@@ -37,9 +37,9 @@ wrangler deploy    # push to Workers once you've reviewed the output
 
 ### Optional: tap into hosted LLMs
 
-The worker can call Groq's OpenAI-compatible API first (fast, stable) and fall back to Hugging Face or the deterministic template if the AI call fails.
+The worker can call Groq's OpenAI-compatible API first (fast, stable) and fall back to the deterministic template if the AI call fails.
 
-**Groq (recommended)**
+**Groq**
 
 1. Create an API key at https://console.groq.com.
 2. Store it as a secret:
@@ -61,17 +61,7 @@ wrangler secret put GROQ_MODEL_ID  # e.g., llama-3.1-70b-versatile
 wrangler deploy
 ```
 
-**Hugging Face fallback (optional)**
-
-Add an HF access token if you want a secondary AI provider (the worker tries Groq → HF → deterministic):
-
-```powershell
-wrangler secret put HF_API_KEY   # paste your HF token
-wrangler secret put HF_MODEL_ID  # optional override
-wrangler deploy
-```
-
-The response JSON always includes `meta.source` (`groq`, `huggingface`, or `deterministic`) so you can see which path served the prompt.
+The response JSON includes `meta.source` (`groq` or `deterministic`) so you can see which path served the prompt.
 
 ## Deploying
 
