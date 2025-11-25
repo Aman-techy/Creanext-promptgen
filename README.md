@@ -1,70 +1,83 @@
-# CreaNext – AI Prompt Generator
+# CreaNext – Prompt Studio
 
-Modern glassmorphic landing page for the CreaNext prompt generator. The project is now **frontend only** and relies on a deterministic Cloudflare Worker (or any compatible endpoint) configured inside `script.js` via `API_URL`.
+Single-page landing site for crafting clean prompt briefs. The interface is **pure frontend** and pings an HTTPS endpoint defined in `script.js` via `API_URL`.
 
 ## Requirements
 
-- Any static web server (or simply open `index.html` in your browser)
-- Optional: VS Code Live Server for local hot reload
+- Any static file server (or double-click `index.html`).
+- Optional: VS Code Live Server for quick refreshes.
 
 ## Local development
 
 ```powershell
 # from the repo root
 code .
-# use Live Server or double-click index.html
+# start Live Server or open index.html
 ```
 
-No build step or package installation is needed.
+No build tooling or dependencies are required.
 
-## Deploying to GitHub Pages
+## Configuring the backend endpoint
 
-1. Commit the static files (`index.html`, `style.css`, `script.js`, assets).
-2. Push to the `main` branch.
-3. Enable GitHub Pages for the repository (Settings → Pages → `main` / `/root`).
-4. Confirm that `API_URL` in `script.js` points to a reachable backend (Cloudflare Worker, Worker proxy, etc.).
+1. Point `API_URL` inside `script.js` to any POST endpoint that accepts `{ idea, type }` and returns `{ prompt }`.
+2. To override the URL without editing files, run `setCreaNextApiUrl("https://your-endpoint.example.com/api")` in the browser console. The helper stores the value in `localStorage` for the next visit.
 
-## Custom backends
+### Use the bundled Cloudflare Worker
 
-If you later add your own backend (Node, Workers, etc.), expose a POST endpoint that accepts `{ idea, type }` and update `API_URL` accordingly. Keep the frontend static so it can stay on GitHub Pages or any CDN.
-
-## Recommended free API: Cloudflare Worker (deterministic)
-
-Cloudflare’s free Workers tier (100k requests/day) lets you deploy the `cloudflare-worker/worker.js` file without additional services. The Worker performs all prompt scaffolding locally, so it never fails because of upstream AI outages.
-
-### 1. Create a Worker (dashboard or Wrangler)
-
-- **Dashboard**: Workers & Pages → Create Worker → paste the contents of `cloudflare-worker/worker.js` into the editor → Deploy.
-- **Wrangler** (CLI alternative):
+If you just need a deterministic rules-based backend, the repo now ships with `cloudflare-worker/`:
 
 ```powershell
-wrangler login
-wrangler init creanext-worker --type=javascript
-cd creanext-worker
-# replace src/index.js with cloudflare-worker/worker.js
+cd cloudflare-worker
+npm test            # local smoke test (runs under Node 18+)
+wrangler deploy    # push to Workers once you've reviewed the output
+```
+
+- Cloudflare CLI will prompt for a name the first time (or use the default in `wrangler.toml`).
+- After deploy, copy the printed `*.workers.dev` URL and either hardcode it into `script.js` or call `setCreaNextApiUrl()` during runtime.
+
+### Optional: tap into hosted LLMs
+
+The worker can call Groq's OpenAI-compatible API first (fast, stable) and fall back to Hugging Face or the deterministic template if the AI call fails.
+
+**Groq (recommended)**
+
+1. Create an API key at https://console.groq.com.
+2. Store it as a secret:
+
+```powershell
+cd cloudflare-worker
+wrangler secret put GROQ_API_KEY   # paste the Groq key
+```
+
+3. (Optional) change the Groq model:
+
+```powershell
+wrangler secret put GROQ_MODEL_ID  # e.g., llama-3.1-70b-versatile
+```
+
+4. Deploy:
+
+```powershell
 wrangler deploy
 ```
 
-No bindings or secrets are required.
+**Hugging Face fallback (optional)**
 
-### 2. Grab the endpoint
+Add an HF access token if you want a secondary AI provider (the worker tries Groq → HF → deterministic):
 
-After deploy, note the auto-generated URL (e.g., `https://creanext-worker.yourname.workers.dev/api/prompt`). If you own a domain, add a route, otherwise the workers.dev domain is fine.
-
-### 3. Point the frontend
-
-In your browser console run:
-
-```javascript
-setCreaNextApiUrl("https://creanext-worker.yourname.workers.dev/api/prompt")
+```powershell
+wrangler secret put HF_API_KEY   # paste your HF token
+wrangler secret put HF_MODEL_ID  # optional override
+wrangler deploy
 ```
 
-This stores the URL in `localStorage` so the static site uses it immediately. Commit the URL to `script.js` if you want it baked in for every visitor.
+The response JSON always includes `meta.source` (`groq`, `huggingface`, or `deterministic`) so you can see which path served the prompt.
 
-### 4. Test end-to-end
+## Deploying
 
-1. Push the static site to GitHub Pages.
-2. Visit the Pages URL, submit a prompt, and confirm you get a JSON response.
-3. (Optional) Hit `https://<worker>/api/prompt` with `POST` requests from Postman or curl to validate independently.
+1. Commit the static files (`index.html`, `style.css`, `script.js`).
+2. Push to `main`.
+3. Enable GitHub Pages (Settings → Pages → `main` / `/root`).
+4. Visit the published URL and run a test request.
 
-You can swap this Worker for any HTTPS endpoint that accepts `{ idea, type }` and returns `{ prompt }` without changing the frontend logic.
+Any CDN or static host works just as well—upload the three files and keep your endpoint reachable.

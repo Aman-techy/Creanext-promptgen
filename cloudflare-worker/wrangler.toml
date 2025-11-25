@@ -1,0 +1,6 @@
+name = "creanext-worker"
+main = "src/index.js"
+compatibility_date = "2023-12-01"
+
+[vars]
+# You can add optional environment variables here later.

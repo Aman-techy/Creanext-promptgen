@@ -1,0 +1,9 @@
+{
+  "name": "creanext-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node ./test-runner.mjs"
+  },
+  "devDependencies": {}
+}

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CreaNext – AI Prompt Generator</title>
+    <title>CreaNext – Prompt Studio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -24,8 +24,8 @@
         <section id="hero" class="hero-section">
             <div class="hero-content">
                 <p class="hero-kicker">Create Beyond Imagination</p>
-                <h1>CreaNext AI Prompt Generator</h1>
-                <p class="hero-subtitle">Generate perfect prompts for any AI model in seconds.</p>
+                <h1>CreaNext Prompt Studio</h1>
+                <p class="hero-subtitle">Shape clear, ready-to-use prompts in seconds.</p>
                 <button class="primary-btn" id="cta-btn">Start Creating</button>
             </div>
             <div class="hero-visual">
@@ -37,7 +37,7 @@
                         <div class="panel-icon" aria-hidden="true"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
                         <div>
                             <p class="panel-title">Smart presets</p>
-                            <p class="panel-text">One-tap styles tuned for top AI models.</p>
+                            <p class="panel-text">One-tap styles tuned for top creative tools.</p>
                         </div>
                     </article>
                     <article class="panel-item">
@@ -67,15 +67,15 @@
                 <label for="prompt-input" class="sr-only">Enter your idea</label>
                 <textarea id="prompt-input" placeholder="Enter your idea…"></textarea>
                 <div class="input-row">
-                    <label for="prompt-type" class="sr-only">Prompt type</label>
-                    <select id="prompt-type">
-                        <option value="image">Image Prompt</option>
-                        <option value="video">YouTube Video Idea</option>
-                        <option value="blog">Blog Content</option>
-                        <option value="ad">Ad Copy</option>
-                        <option value="code">Coding Prompt</option>
-                    </select>
-                    <button class="primary-btn" id="generate-btn">Generate Prompt</button>
+                    <div class="auto-category-panel" aria-live="polite">
+                        <p class="category-panel-label">Auto category</p>
+                        <div class="category-chip" id="category-chip">
+                            <span class="category-glow" aria-hidden="true"></span>
+                            <span class="category-name" id="category-name">Concept Lab</span>
+                        </div>
+                        <p class="category-panel-hint">CreaNext scans 100+ creative lanes and locks the best fit for your idea.</p>
+                        <button class="primary-btn generate-btn" id="generate-btn">Generate Prompt</button>
+                    </div>
                 </div>
                 <div class="prompt-output" id="prompt-output">
                     Ready when you are—enter an idea and hit Generate to see your prompt.
